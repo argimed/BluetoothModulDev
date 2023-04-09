@@ -8,7 +8,7 @@ import java.io.IOException
 import java.util.*
 
 
-class ConnectThread(device: BluetoothDevice) : Thread() {
+class ConnectThread(device: BluetoothDevice, val listener: BluetoothController.Listener) : Thread() {
 //    private val uuid = "00002901-0000-1000-8000-00805f9b34fb" //HMSoft
     private val uuid = "0000ffe0-0000-1000-8000-00805f9b34fb"  //HMSoft
     private var mSocket: BluetoothSocket? = null
@@ -24,11 +24,10 @@ class ConnectThread(device: BluetoothDevice) : Thread() {
 
     override fun run() {
         try {
-            Log.d("MyLog","Connecting...")
             mSocket?.connect()
-            Log.d("MyLog","Connected")
+            listener.onReceive(BluetoothController.BLUETOOTH_CONNECTED)
         } catch (e: IOException){
-            Log.d("MyLog","Not Connected")
+            listener.onReceive(BluetoothController.BLUETOOTH_NO_CONNECTED)
         } catch (se: SecurityException){
 
         }

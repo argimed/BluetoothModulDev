@@ -3,5 +3,6 @@
     <color name="red">#FA0000</color>
     <color name="yellow">#FFEB3B</color>
     <color name="blue">#2196F3</color>
+    <color name="green">#4CAF50</color>
     <color name="white_dark">#CDCDCD</color>
 </resources>
