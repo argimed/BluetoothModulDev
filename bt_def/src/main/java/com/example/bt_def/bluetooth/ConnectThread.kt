@@ -1,16 +1,16 @@
 package com.example.bt_def.bluetooth
 
-import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
-import android.util.Log
 import java.io.IOException
 import java.util.*
 
 
 class ConnectThread(device: BluetoothDevice, val listener: BluetoothController.Listener) : Thread() {
 //    private val uuid = "00002901-0000-1000-8000-00805f9b34fb" //HMSoft
-    private val uuid = "0000ffe0-0000-1000-8000-00805f9b34fb"  //HMSoft
+//    private val uuid = "0000ffe0-0000-1000-8000-00805f9b34fb"  //HMSoft
+
+    private val uuid = "00001101-0000-1000-8000-00805F9B34FB"  //HC-06
     private var mSocket: BluetoothSocket? = null
     init {
         try {
@@ -22,13 +22,35 @@ class ConnectThread(device: BluetoothDevice, val listener: BluetoothController.L
         }
     }
 
+
     override fun run() {
         try {
             mSocket?.connect()
             listener.onReceive(BluetoothController.BLUETOOTH_CONNECTED)
+            readMessage()
         } catch (e: IOException){
             listener.onReceive(BluetoothController.BLUETOOTH_NO_CONNECTED)
         } catch (se: SecurityException){
+
+        }
+    }
+    private fun readMessage() {
+        val buffer = ByteArray(256)
+        while (true) {
+            try {
+                val length = mSocket?.inputStream?.read(buffer)
+                val message = String(buffer, 0, length ?: 0)
+                listener.onReceive(message)
+            } catch (e: IOException) {
+                listener.onReceive(BluetoothController.BLUETOOTH_NO_CONNECTED)
+                break
+            }
+        }
+    }
+    fun sendMessage(message: String){
+        try {
+            mSocket?.outputStream?.write(message.toByteArray())
+        } catch (e: IOException){
 
         }
     }
